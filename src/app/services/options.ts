@@ -15,12 +15,10 @@ export class Options {
     { id: '-1', label: '-1', operation: '-1' }
   ];
 
-  /** List form (used by OptionSelector) */
   getOptions(): Option[] {
     return this.options;
   }
 
-  /** Map form (used by SelectionState) */
   getOptionsMap(): Map<string, Option> {
     return new Map(this.options.map(option => [option.id, option]));
   }
