@@ -1,0 +1,50 @@
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Input
+} from '@angular/core';
+import { AsyncPipe, DecimalPipe } from '@angular/common';
+import {
+  BehaviorSubject,
+  Observable,
+  switchMap
+} from 'rxjs';
+import { BoxSelection } from '../../models/selection';
+import { SelectionState } from '../../services/selection-state';
+
+@Component({
+  selector: 'app-box',
+  imports: [AsyncPipe, DecimalPipe],
+  templateUrl: './box.html',
+  styleUrl: './box.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class Box {
+  private readonly boxIdSubject = new BehaviorSubject<number>(0);
+
+  @Input({ required: true })
+  set boxId(value: number) {
+    this.boxIdSubject.next(value);
+  }
+
+  readonly isActive$: Observable<boolean> =
+    this.boxIdSubject.pipe(
+      switchMap(boxId => this.state.isBoxActive$(boxId))
+    );
+
+  readonly selection$: Observable<BoxSelection | undefined> =
+    this.boxIdSubject.pipe(
+      switchMap(boxId => this.state.selectionForBox$(boxId))
+    );
+
+  readonly subtotal$: Observable<{ expression: string; result: number }> =
+    this.boxIdSubject.pipe(
+      switchMap(boxId => this.state.subtotalForBox$(boxId))
+    );
+
+  constructor(private readonly state: SelectionState) {}
+
+  onBoxClick(): void {
+    this.state.activateBox(this.boxIdSubject.value);
+  }
+}

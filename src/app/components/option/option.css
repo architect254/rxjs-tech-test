@@ -1,0 +1,10 @@
+.option {
+    padding: 8px;
+    border: 1px solid #ddd;
+    cursor: pointer;
+}
+
+.option.selected {
+    background: #000;
+    color: #fff;
+}

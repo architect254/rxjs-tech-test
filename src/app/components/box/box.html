@@ -1,0 +1,22 @@
+<div class="box" [class.active]="isActive$ | async" (click)="onBoxClick()">
+    <div class="box-id-wrapper"> <span class="box-id">{{ boxId }}</span></div>
+
+    @if (selection$ | async; as selection) {
+    @if (selection.optionId) {
+    <div class="selected-option">
+        {{ selection.optionId }}
+    </div>
+    } @else {
+    <div class="placeholder">Select element</div>
+    }
+    }
+    <div class="bottom-wrapper"><span class="box-segment"></span><span class="box-segment">
+            @if (selection$ | async; as selection) {
+            @if (selection.optionId) {
+
+            @if (subtotal$ | async; as
+            subtotal) {
+            {{ subtotal.result | number:'1.1-1' }}
+            }}}
+        </span><span class="box-segment"></span></div>
+</div>

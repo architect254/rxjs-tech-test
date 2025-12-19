@@ -1,0 +1,13 @@
+.boxes {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(174px, 1fr));
+    gap: 0;
+    margin-bottom: 24px;
+}
+
+.action-box {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    padding: 8px;
+}
