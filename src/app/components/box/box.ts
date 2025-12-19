@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  inject,
   Input
 } from '@angular/core';
 import { AsyncPipe, DecimalPipe } from '@angular/common';
@@ -21,6 +22,7 @@ import { SelectionState } from '../../services/selection-state';
 })
 export class Box {
   private readonly boxIdSubject = new BehaviorSubject<number>(0);
+  public readonly boxId$ = this.boxIdSubject.asObservable()
 
   @Input({ required: true })
   set boxId(value: number) {
@@ -42,7 +44,7 @@ export class Box {
       switchMap(boxId => this.state.subtotalForBox$(boxId))
     );
 
-  constructor(private readonly state: SelectionState) {}
+  private readonly state: SelectionState = inject(SelectionState)
 
   onBoxClick(): void {
     this.state.activateBox(this.boxIdSubject.value);

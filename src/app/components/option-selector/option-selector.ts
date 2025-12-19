@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { Option as OptionCmp } from '../option/option';
 import { Observable } from 'rxjs';
 import { Options } from '../../services/options';
@@ -14,14 +14,11 @@ import { AsyncPipe } from '@angular/common';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class OptionSelector {
-  readonly activeBoxId$: Observable<number>;
-  options: Option[];
+  private readonly state: SelectionState = inject(SelectionState);
+  private readonly optionsService: Options = inject(Options);
 
-  constructor(
-    private readonly state: SelectionState,
-    private readonly optionsService: Options
-  ) {
-    this.activeBoxId$ = this.state.activeBoxId$;
-    this.options = this.optionsService.getOptions();
-  }
+  public readonly activeBoxId$: Observable<number> = this.state.activeBoxId$;
+  public readonly options: Option[] = this.optionsService.getOptions();
+
+
 }

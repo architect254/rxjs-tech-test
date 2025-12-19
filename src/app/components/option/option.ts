@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, Input } from '@angular/core';
 import { BehaviorSubject, Observable, map, switchMap } from 'rxjs';
 import { SelectionState } from '../../services/selection-state';
 import { Option as _Option } from '../../models/selection';
@@ -29,7 +29,7 @@ export class Option {
     )
   );
 
-  constructor(private readonly state: SelectionState) { }
+  private readonly state: SelectionState = inject(SelectionState)
 
   onSelect(): void {
     this.state.selectOption(this.boxIdSubject.value, this.option.id);

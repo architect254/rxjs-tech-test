@@ -1,5 +1,5 @@
 <div class="box" [class.active]="isActive$ | async" (click)="onBoxClick()">
-    <div class="box-id-wrapper"> <span class="box-id">{{ boxId }}</span></div>
+    <div class="box-id-wrapper"> <span class="box-id">{{ boxId$ | async}}</span></div>
 
     @if (selection$ | async; as selection) {
     @if (selection.optionId) {

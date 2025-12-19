@@ -6,6 +6,12 @@
     position: relative;
 }
 
+
+.box:hover {
+    background-color: #ccc;
+    cursor: pointer;
+}
+
 .box.active {
     border-color: black;
     background-color: rgba(172, 255, 47, 0.349);

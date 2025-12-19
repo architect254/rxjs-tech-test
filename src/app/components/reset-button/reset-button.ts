@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { SelectionState } from '../../services/selection-state';
 
 @Component({
@@ -9,7 +9,7 @@ import { SelectionState } from '../../services/selection-state';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ResetButton {
-  constructor(private readonly state: SelectionState) { }
+  private readonly state: SelectionState = inject(SelectionState)
 
   onReset(): void {
     this.state.resetAll();
