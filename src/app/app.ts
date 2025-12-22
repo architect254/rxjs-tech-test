@@ -18,4 +18,6 @@ export class App {
   public readonly boxIds = Array.from({ length: 10 }, (_, i) => i + 1);
 
   public readonly state: SelectionState = inject(SelectionState)
+
+  public boxActivated = false;
 }

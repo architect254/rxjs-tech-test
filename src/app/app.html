@@ -1,8 +1,6 @@
-<h1>Box Selector (RxJS)</h1>
-
 <div class="boxes">
   @for (boxId of boxIds; track boxId) {
-  <app-box [boxId]="boxId" />
+  <app-box [boxId]="boxId" (onBoxActivated)="boxActivated = true" />
   }
   <div class="action-box">
     <app-reset-button />
@@ -11,4 +9,6 @@
   </div>
 </div>
 
+@if (boxActivated) {
 <app-option-selector />
+}

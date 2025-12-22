@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, Input } from '@angular/core';
 import { BehaviorSubject, Observable, map, switchMap } from 'rxjs';
 import { SelectionState } from '../../services/selection-state';
-import { Option as _Option } from '../../models/selection';
+import { Option as _Option } from '../../services/options';
 import { AsyncPipe } from '@angular/common';
 
 @Component({
@@ -24,7 +24,7 @@ export class Option {
   readonly isSelected$: Observable<boolean> = this.boxIdSubject.pipe(
     switchMap(boxId =>
       this.state.selectionForBox$(boxId).pipe(
-        map(selection => selection?.optionId === this.option.id)
+        map(selection => selection?.optionLabel === this.option.label)
       )
     )
   );
@@ -32,6 +32,6 @@ export class Option {
   private readonly state: SelectionState = inject(SelectionState)
 
   onSelect(): void {
-    this.state.selectOption(this.boxIdSubject.value, this.option.id);
+    this.state.selectOption(this.boxIdSubject.value, this.option.label);
   }
 }

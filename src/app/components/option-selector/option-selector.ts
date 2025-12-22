@@ -1,8 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { Option as OptionCmp } from '../option/option';
 import { Observable } from 'rxjs';
-import { Options } from '../../services/options';
-import { Option } from '../../models/selection';
+import { Options, OptionGroup } from '../../services/options';
 import { SelectionState } from '../../services/selection-state';
 import { AsyncPipe } from '@angular/common';
 
@@ -18,7 +17,7 @@ export class OptionSelector {
   private readonly optionsService: Options = inject(Options);
 
   public readonly activeBoxId$: Observable<number> = this.state.activeBoxId$;
-  public readonly options: Option[] = this.optionsService.getOptions();
+  public readonly optionGroups: OptionGroup[] = this.optionsService.getGroupedOptions();
 
 
 }

@@ -1,7 +1,11 @@
 import { inject, Injectable } from "@angular/core";
 import { BehaviorSubject, map, distinctUntilChanged } from "rxjs";
-import { BoxSelection } from "../models/selection";
 import { Options } from "./options";
+
+export interface BoxSelection {
+  boxId: number;
+  optionLabel: string | null;
+}
 
 @Injectable({ providedIn: 'root' })
 export class SelectionState {
@@ -9,7 +13,7 @@ export class SelectionState {
 
   // ────────────── base state ──────────────
 
-  private readonly activeBoxIdSubject = new BehaviorSubject<number>(1);
+  private readonly activeBoxIdSubject = new BehaviorSubject<number>(0);
   readonly activeBoxId$ = this.activeBoxIdSubject.asObservable();
 
   private readonly selectionsSubject = new BehaviorSubject<BoxSelection[]>(
@@ -43,8 +47,8 @@ export class SelectionState {
   boxExpression$(boxId: number) {
     return this.selectionForBox$(boxId).pipe(
       map(selection =>
-        selection?.optionId
-          ? this.optionsMap.get(selection.optionId)?.operation ?? null
+        selection?.optionLabel
+          ? this.optionsMap.get(selection.optionLabel)?.value ?? null
           : null
       )
     );
@@ -66,9 +70,9 @@ export class SelectionState {
     this.activeBoxIdSubject.next(boxId);
   }
 
-  selectOption(boxId: number, optionId: string): void {
+  selectOption(boxId: number, optionLabel: string): void {
     const updated = this.selectionsSubject.value.map(s =>
-      s.boxId === boxId ? { ...s, optionId } : s
+      s.boxId === boxId ? { ...s, optionLabel } : s
     );
 
     this.selectionsSubject.next(updated);
@@ -83,7 +87,6 @@ export class SelectionState {
     const reset = this.createEmptyState();
     this.selectionsSubject.next(reset);
     this.persist(reset);
-    this.activateBox(1);
   }
 
   // ────────────── pure logic ──────────────
@@ -92,45 +95,37 @@ export class SelectionState {
     selections: BoxSelection[],
     boxId: number
   ) {
-    const ops = selections
-      .filter(s => s.boxId <= boxId && s.optionId)
-      .map(s => this.optionsMap.get(s.optionId!)?.operation)
-      .filter((op): op is string => !!op);
+    // 1. Grab all selections for this box and any previous boxes
+    // 2. Map them to their numeric values using the label-based map
+    const values = selections
+      .filter(s => s.boxId <= boxId && s.optionLabel)
+      .map(s => this.optionsMap.get(s.optionLabel!)?.value)
+      .filter((v): v is number => v !== undefined);
 
-    return this.evaluateOperations(ops);
+    // 3. Perform a simple sum (addition)
+    const result = values.reduce((acc, curr) => acc + curr, 0);
+
+    // 4. Return an object consistent with your current UI needs
+    return {
+      result,
+      expression: values.map(v => (v >= 0 ? `+${v}` : v)).join(' ')
+    };
   }
 
   private calculateTotal(selections: BoxSelection[]) {
-    const ops = selections
-      .filter(s => s.optionId)
-      .map(s => this.optionsMap.get(s.optionId!)?.operation)
-      .filter((op): op is string => !!op);
-
-    return this.evaluateOperations(ops).result;
+    return selections
+      .map(s => (s.optionLabel ? this.optionsMap.get(s.optionLabel)?.value ?? 0 : 0))
+      .reduce((acc, curr) => acc + curr, 0);
   }
 
-  private evaluateOperations(ops: string[]) {
-    if (ops.length === 0) {
-      return { expression: '', result: 0 };
-    }
 
-    let result = Number(ops[0].slice(1));
-    const expression = [ops[0]];
-
-    for (let i = 1; i < ops.length; i++) {
-      result = applyOperation(result, ops[i]);
-      expression.push(ops[i]);
-    }
-
-    return { expression: expression.join(' '), result };
-  }
 
   // ────────────── persistence ──────────────
 
   private createEmptyState(): BoxSelection[] {
     return Array.from({ length: this.BOX_COUNT }, (_, i) => ({
       boxId: i + 1,
-      optionId: null
+      optionLabel: null
     }));
   }
 
@@ -141,18 +136,5 @@ export class SelectionState {
   private loadInitialState(): BoxSelection[] {
     const raw = localStorage.getItem('box-selections');
     return raw ? JSON.parse(raw) : this.createEmptyState();
-  }
-}
-
-function applyOperation(current: number, operation: string): number {
-  const operator = operation.charAt(0);
-  const operand = Number(operation.slice(1));
-
-  switch (operator) {
-    case '+': return current + operand;
-    case '-': return current - operand;
-    case '*': return current * operand;
-    case '/': return current / operand;
-    default: return current;
   }
 }

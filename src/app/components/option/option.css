@@ -1,10 +1,36 @@
 .option {
     padding: 8px;
-    border: 1px solid #ddd;
+    border: 1px solid #eee;
     cursor: pointer;
+    position: relative;
+    width: 58px;
+
 }
 
 .option.selected {
     background: #000;
     color: #fff;
+}
+
+.option:hover::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 125%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #333;
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 4px;
+    white-space: nowrap;
+    font-size: 12px;
+    z-index: 10;
+
+    pointer-events: none;
+    opacity: 1;
+}
+
+.option[data-tooltip=""]::after,
+.option:not([data-tooltip])::after {
+    display: none;
 }

@@ -22,7 +22,8 @@
 
 
 .md-btn-stroked {
-    background-color: transparent;
+    background-color: cornflowerblue;
+    padding: 24px;
     color: var(--md-primary);
     border: 1px solid var(--md-border);
 }

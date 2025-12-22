@@ -1,8 +1,10 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  EventEmitter,
   inject,
-  Input
+  Input,
+  Output
 } from '@angular/core';
 import { AsyncPipe, DecimalPipe } from '@angular/common';
 import {
@@ -10,8 +12,7 @@ import {
   Observable,
   switchMap
 } from 'rxjs';
-import { BoxSelection } from '../../models/selection';
-import { SelectionState } from '../../services/selection-state';
+import { SelectionState, BoxSelection } from '../../services/selection-state';
 
 @Component({
   selector: 'app-box',
@@ -23,6 +24,8 @@ import { SelectionState } from '../../services/selection-state';
 export class Box {
   private readonly boxIdSubject = new BehaviorSubject<number>(0);
   public readonly boxId$ = this.boxIdSubject.asObservable()
+
+  @Output() public onBoxActivated = new EventEmitter()
 
   @Input({ required: true })
   set boxId(value: number) {
@@ -48,5 +51,6 @@ export class Box {
 
   onBoxClick(): void {
     this.state.activateBox(this.boxIdSubject.value);
+    this.onBoxActivated.emit(true)
   }
 }

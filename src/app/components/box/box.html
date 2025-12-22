@@ -2,9 +2,9 @@
     <div class="box-id-wrapper"> <span class="box-id">{{ boxId$ | async}}</span></div>
 
     @if (selection$ | async; as selection) {
-    @if (selection.optionId) {
+    @if (selection.optionLabel) {
     <div class="selected-option">
-        {{ selection.optionId }}
+        {{ selection.optionLabel }}
     </div>
     } @else {
     <div class="placeholder">Select element</div>
@@ -12,7 +12,7 @@
     }
     <div class="bottom-wrapper"><span class="box-segment"></span><span class="box-segment">
             @if (selection$ | async; as selection) {
-            @if (selection.optionId) {
+            @if (selection.optionLabel) {
 
             @if (subtotal$ | async; as
             subtotal) {
