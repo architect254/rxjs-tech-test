@@ -20,6 +20,7 @@ export class Option {
 
   private readonly boxIdSubject = new BehaviorSubject<number>(0);
 
+  private readonly state: SelectionState = inject(SelectionState)
 
   readonly isSelected$: Observable<boolean> = this.boxIdSubject.pipe(
     switchMap(boxId =>
@@ -28,8 +29,6 @@ export class Option {
       )
     )
   );
-
-  private readonly state: SelectionState = inject(SelectionState)
 
   onSelect(): void {
     this.state.selectOption(this.boxIdSubject.value, this.option.label);

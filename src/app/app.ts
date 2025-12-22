@@ -15,6 +15,7 @@ import { AsyncPipe, DecimalPipe } from '@angular/common';
 })
 export class App {
   protected readonly title = 'rxjs-tech-test';
+  
   public readonly boxIds = Array.from({ length: 10 }, (_, i) => i + 1);
 
   public readonly state: SelectionState = inject(SelectionState)

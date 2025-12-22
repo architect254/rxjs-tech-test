@@ -22,15 +22,17 @@ import { SelectionState, BoxSelection } from '../../services/selection-state';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Box {
-  private readonly boxIdSubject = new BehaviorSubject<number>(0);
-  public readonly boxId$ = this.boxIdSubject.asObservable()
-
-  @Output() public onBoxActivated = new EventEmitter()
-
   @Input({ required: true })
   set boxId(value: number) {
     this.boxIdSubject.next(value);
   }
+
+  @Output() public onBoxActivated = new EventEmitter()
+
+  private readonly boxIdSubject = new BehaviorSubject<number>(0);
+  public readonly boxId$ = this.boxIdSubject.asObservable()
+
+  private readonly state: SelectionState = inject(SelectionState)
 
   readonly isActive$: Observable<boolean> =
     this.boxIdSubject.pipe(
@@ -47,7 +49,6 @@ export class Box {
       switchMap(boxId => this.state.subtotalForBox$(boxId))
     );
 
-  private readonly state: SelectionState = inject(SelectionState)
 
   onBoxClick(): void {
     this.state.activateBox(this.boxIdSubject.value);
