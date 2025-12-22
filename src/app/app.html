@@ -1,14 +1,1 @@
-<div class="boxes">
-  @for (boxId of boxIds; track boxId) {
-  <app-box [boxId]="boxId" (onBoxActivated)="boxActivated = true" />
-  }
-  <div class="action-box">
-    <app-reset-button />
-
-    Total value: {{ state.total$ | async | number:'1.1-1'}}
-  </div>
-</div>
-
-@if (boxActivated) {
-<app-option-selector />
-}
+<app-dashboard></app-dashboard>
