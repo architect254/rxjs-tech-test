@@ -12,7 +12,7 @@ import { SelectionService } from '../services/selection';
     <div class="option" 
          [class.selected]="isSelected$ | async" 
          [attr.data-tooltip]="option.value"
-         (click)="store.updateSelection(boxId, option.label)">
+         (click)="store.updateSelection(boxId, option)">
       {{ option.label }}
     </div>
   `,
@@ -27,7 +27,7 @@ import { SelectionService } from '../services/selection';
       position: relative; 
       transition: background 0.2s;
     }
-    /* This is the highlight rule */
+
     .option.selected { 
       background: #2c3e50 !important; 
       color: white !important; 
@@ -43,7 +43,6 @@ export class OptionComponent implements OnChanges {
   isSelected$!: Observable<boolean>;
 
   ngOnChanges(changes: SimpleChanges) {
-    // If boxId changes, we must recreate the stream to listen to the new box
     if (changes['boxId']) {
       this.isSelected$ = this.store.getSelectionForBox(this.boxId).pipe(
         map(selection => selection?.optionLabel === this.option.label)

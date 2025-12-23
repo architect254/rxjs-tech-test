@@ -11,4 +11,5 @@ export interface OptionGroup {
 export interface BoxSelection {
     boxId: number;
     optionLabel: string | null;
+    optionValue: number | null;
 }

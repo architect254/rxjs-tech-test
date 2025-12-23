@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, Component, Input, inject } from '@angular/core';
-import { AsyncPipe, DecimalPipe } from '@angular/common';
-import { SelectionService } from '../services/selection';
+import { AsyncPipe, DecimalPipe } from "@angular/common";
+import { Component, ChangeDetectionStrategy, Input, inject } from "@angular/core";
+import { SelectionService } from "../services/selection";
 
 @Component({
   selector: 'app-box',
@@ -28,7 +28,7 @@ import { SelectionService } from '../services/selection';
           <span class="box-segment"></span>
           <span class="box-segment">
             @if (selection.optionLabel) {
-              {{ store.getSubtotalForBox(boxId) | async | number:'1.1-1' }}
+              {{ selection.optionValue | number:'1.1-1' }}
             }
           </span>
           <span class="box-segment"></span>
@@ -37,17 +37,85 @@ import { SelectionService } from '../services/selection';
     </div>
   `,
   styles: [`
-    .box { border: 1px solid rgba(255, 255, 255, 0.507); height: 174px; padding: 0 12px; cursor: pointer; position: relative; background: white; }
-    .box:hover { background-color: #eee; }
-    .box.active { background-color: rgba(172, 255, 47, 0.349); }
-    .box-id-wrapper { position: absolute; top: 0; left: 0; background-color: #eee; width: 100%; height: 24px; }
-    .box.active .box-id-wrapper { background-color: rgba(172, 255, 47, 0.349); }
-    .box-id { position: absolute; top: 0px; left: 0; padding: 0 4px; background: white; font-weight: bold; font-size: 12px; }
-    .selected-option { font-size: 74px; position: absolute; top: 10%; left: 8%; font-weight: bold; }
-    .placeholder { position: relative; top: 40%; font-size:14px; text-align: center; color: #999; }
-    .bottom-wrapper { position: absolute; bottom: 0; left: 0; width: 100%; display: flex; justify-content: space-evenly; gap: 1px; }
-    .box-segment { height: 24px; background-color: #eee; width: 100%; text-align: center; line-height: 24px; font-size: 12px; }
-    .box.active .box-segment { background-color: rgba(172, 255, 47, 0.349); }
+    .box { 
+      border: 1px solid #ddd; 
+      height: 174px; 
+      cursor: pointer; 
+      position: relative; 
+      background: white; 
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .box:hover { background-color: #f8f9fa; }
+    .box.active { background-color: rgba(172, 255, 47, 0.3); }
+
+    .box-id-wrapper { 
+      position: absolute; 
+      top: 0; 
+      left: 0; 
+      background-color: #eee; 
+      width: 100%; 
+      height: 24px; 
+      z-index: 1;
+    }
+
+    .box.active .box-id-wrapper { background-color: rgba(172, 255, 47, 0.5); }
+
+    .box-id { 
+      position: absolute; 
+      top: 0px; 
+      left: 0; 
+      padding: 0 6px; 
+      background: white; 
+      font-weight: bold; 
+      font-size: 11px; 
+    }
+
+    .selected-option { 
+      /* Dynamically scales font between 40px and 74px */
+      font-size: clamp(40px, 8vw, 74px); 
+      position: absolute; 
+      top: 50%; 
+      left: 50%; 
+      transform: translate(-50%, -55%); 
+      font-weight: bold; 
+      color: #2c3e50;
+      white-space: nowrap;
+    }
+
+    .placeholder { 
+      position: absolute;
+      top: 50%;
+      left: 0;
+      width: 100%;
+      transform: translateY(-50%);
+      font-size: 12px; 
+      text-align: center; 
+      color: #aaa; 
+    }
+
+    .bottom-wrapper { 
+      position: absolute; 
+      bottom: 0; 
+      left: 0; 
+      width: 100%; 
+      display: flex; 
+      gap: 1px; 
+    }
+
+    .box-segment { 
+      height: 24px; 
+      background-color: #eee; 
+      flex: 1; 
+      text-align: center; 
+      line-height: 24px; 
+      font-size: 11px; 
+      color: #555;
+    }
+
+    .box.active .box-segment { background-color: rgba(172, 255, 47, 0.5); }
   `]
 })
 export class BoxComponent {

@@ -1,19 +1,32 @@
 import { Injectable, inject } from '@angular/core';
-import { BehaviorSubject, map, combineLatest, Observable } from 'rxjs';
+import { BehaviorSubject, map, Observable } from 'rxjs';
 import { OptionsService } from '../../../core/services/options';
-import { BoxSelection } from '../../../shared/models/selection.models';
+import { BoxSelection, Option } from '../../../shared/models/selection.models';
 
 @Injectable({ providedIn: 'root' })
 export class SelectionService {
   private optionsService = inject(OptionsService);
 
-  private selections$ = new BehaviorSubject<BoxSelection[]>(
-    JSON.parse(localStorage.getItem('gym-data') || '[]')
-  );
+  private selections$ = new BehaviorSubject<BoxSelection[]>([]);
   private activeBoxId$ = new BehaviorSubject<number | null>(null);
 
   selections = this.selections$.asObservable();
   activeBoxId = this.activeBoxId$.asObservable();
+
+  constructor() {
+    this.initData();
+  }
+
+  private initData() {
+    const saved = localStorage.getItem('gym-data');
+    const parsed: BoxSelection[] = saved ? JSON.parse(saved) : [];
+
+    if (parsed && parsed.length > 0) {
+      this.selections$.next(parsed);
+    } else {
+      this.reset(); 
+    }
+  }
 
   total$ = this.selections$.pipe(
     map(selections => {
@@ -22,37 +35,37 @@ export class SelectionService {
     })
   );
 
-  // Helper: Get Selection for a specific box
   getSelectionForBox(id: number): Observable<BoxSelection | undefined> {
     return this.selections$.pipe(
-      // We map the entire array to find just the one box we care about
       map(selections => selections.find(s => s.boxId === id))
     );
   }
 
-  // Helper: Get Subtotal up to a box
-  getSubtotalForBox(id: number): Observable<number> {
-    return this.selections$.pipe(
-      map(list => {
-        const map = this.optionsService.getOptionsMap();
-        return list.filter(s => s.boxId <= id)
-          .reduce((acc, s) => acc + (s.optionLabel ? map.get(s.optionLabel)?.value ?? 0 : 0), 0);
-      })
-    );
+  setActiveBox(id: number | null) {
+    this.activeBoxId$.next(id);
   }
 
-  // Methods
-  setActiveBox(id: number | null) { this.activeBoxId$.next(id); }
-
-  updateSelection(boxId: number, label: string) {
-    const updated = this.selections$.value.map(s => s.boxId === boxId ? { ...s, optionLabel: label } : s);
+  updateSelection(boxId: number, option: Option) {
+    const updated = this.selections$.value.map(s =>
+      s.boxId === boxId
+        ? { ...s, optionLabel: option.label, optionValue: option.value }
+        : s
+    );
     this.selections$.next(updated);
     localStorage.setItem('gym-data', JSON.stringify(updated));
-    if (boxId < 10) this.activeBoxId$.next(boxId + 1);
+
+    // Auto-advance logic
+    if (boxId < 10) {
+      this.activeBoxId$.next(boxId + 1);
+    }
   }
 
   reset() {
-    const empty = Array.from({ length: 10 }, (_, i) => ({ boxId: i + 1, optionLabel: null }));
+    const empty: BoxSelection[] = Array.from({ length: 10 }, (_, i) => ({
+      boxId: i + 1,
+      optionLabel: null,
+      optionValue: null
+    }));
     this.selections$.next(empty);
     localStorage.setItem('gym-data', JSON.stringify(empty));
     this.activeBoxId$.next(null);
