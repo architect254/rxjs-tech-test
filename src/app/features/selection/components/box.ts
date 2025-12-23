@@ -94,6 +94,8 @@ import { SelectionService } from "../services/selection";
       font-size: 12px; 
       text-align: center; 
       color: #aaa; 
+      text-transform: uppercase;
+      padding: 0 5px;
     }
 
     .bottom-wrapper { 
