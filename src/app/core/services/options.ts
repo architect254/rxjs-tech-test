@@ -9,7 +9,7 @@ export class OptionsService {
             options: [
                 { label: '- o', value: 0.1 }, { label: '- <', value: 0.1 },
                 { label: '.1', value: 0.2 }, { label: '.2', value: 0.3 },
-                { label: '.3 .4', value: 0.4 }, { label: '-3.4', value: -0.4 }
+                { label: '.34', value: 0.4 }, { label: '-3.4', value: -0.4 }
             ]
         },
         {
